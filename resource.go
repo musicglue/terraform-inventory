@@ -205,6 +205,9 @@ func (r Resource) NameWithCounter() string {
 func (r Resource) Hostname() string {
 	if keyName := os.Getenv("TF_HOSTNAME_KEY_NAME"); keyName != "" {
 		if ip := r.State.Primary.Attributes[keyName]; ip != "" {
+			if tfKeySuffix := os.Getenv("TF_NAME_SUFFIX"); tfKeySuffix != "" {
+				return fmt.Sprintf("%s.%s", ip, tfKeySuffix)
+			}
 			return ip
 		}
 	}
@@ -216,9 +219,6 @@ func (r Resource) Hostname() string {
 func (r Resource) Address() string {
 	if keyName := os.Getenv("TF_KEY_NAME"); keyName != "" {
 		if ip := r.State.Primary.Attributes[keyName]; ip != "" {
-			if tfKeySuffix := os.Getenv("TF_NAME_SUFFIX"); keyName == "name" && tfKeySuffix != "" {
-				return fmt.Sprintf("%s.%s", ip, tfKeySuffix)
-			}
 			return ip
 		}
 	} else {
